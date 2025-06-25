@@ -125,7 +125,7 @@ eas_lead = extract_lead("EAS_hearing_loss_rescale_betase.gz")
 amr_lead = extract_lead("MVP_AMR_hearing_loss_rescale_betase.txt")
 afr_lead = extract_lead("MVP_AFR_hearing_loss_rescale_betase.txt.gz")
 save(eur_lead, eas_lead, amr_lead, afr_lead, file="lead_SNP_in_ancesatry.RData")
-save.image("for_Deming_Pearson.RData")
+save.image("for_Pearson.RData")
 ################################################################################################
 
 eur_eas_cor = run_pearson(fix_effect(eur_lead, eas_lead))
