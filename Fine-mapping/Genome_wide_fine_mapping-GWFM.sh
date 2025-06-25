@@ -22,23 +22,18 @@ gctb --gwas-summary ARHL_MVP_AJHG_BBJ_reformatMETAL_gctb_impu --merge-block-gwas
 
 mv ${out_impu}.ma ../${out_impu}.ma
 
-
-
 # # # 2 step: run genome-wide fine-mapping analysis
 gctb="/public/home/shilulu/software/gctb"
 ldref="/public/share/wchirdzhq2022/Wulab_share/GCTB_ref/ukbEUR_Imputed"
 annofile="/public/share/wchirdzhq2022/Wulab_share/GCTB_ref/annot_baseline2.2.txt"
 outdir="/public/home/shilulu/project_hearing-loss/new_run/all_meta/gctb/fine_mapping"
 gwas_impu="/public/home/shilulu/project_hearing-loss/new_run/all_meta/gctb/ARHL_MVP_AJHG_BBJ_reformatMETAL_gctb.imputed.ma"
-
-
-outprx=$(basename -- ${gwas_impu} ".imputed.ma")
-cmd="${gctb} --sbayes RC --ldm-eigen ${ldref} --annot ${annofile} --gwas-summary ${gwas_impu} --n-dist-auto --write-mcmc-bin --thread 10 \
---out ${outdir}/${outprx}_SbayesRC > ${outdir}/${outprx}_SbayesRC.log 2>&1"
-qsubshcom "$cmd" 10 100G sbayesRC 90:00:00 ""
-
 ldfile="/public/share/wchirdzhq2022/Wulab_share/GCTB_ref/ukbEUR_Imputed/LD_rsq05.ld.txt"
 mcmc_prx=${outdir}/${outprx}_SbayesRC
+
+outprx=$(basename -- ${gwas_impu} ".imputed.ma")
+cmd="${gctb} --sbayes RC --ldm-eigen ${ldref} --annot ${annofile} --gwas-summary ${gwas_impu} --n-dist-auto --write-mcmc-bin --thread 10 --out ${outdir}/${outprx}_SbayesRC > ${outdir}/${outprx}_SbayesRC.log 2>&1"
+qsubshcom "$cmd" 10 100G sbayesRC 90:00:00 ""
 
 cmd="gctb --cs --ld-file ${ldfile} --pip 0.9 --mcmc-samples ${mcmc_prx} --out ${mcmc_prx}_finemapping > ${mcmc_prx}_finemapping.log 2>&1"
 qsubshcom "$cmd" 10 100G sbayesRC 90:00:00 ""

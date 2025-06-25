@@ -67,16 +67,13 @@ common_theme = theme(axis.text.x = element_text(size = 12, angle=60, hjust= .5, 
                      strip.background = element_rect(colour = NA),
                      strip.text = element_text(size = 9))
 
-# 获取所有 compLabel 值（假设有 5 个）
 comp_labels = unique(subplot$compLabel)
 if (length(comp_labels) != 5) warning("Expected 5 compLabels, found ", length(comp_labels))
 
-# 创建子图列表
 plot_list = list()
 for (label in comp_labels) {
   sub_data = subplot %>% filter(compLabel == label)
   if (label == target_compLabel) {
-    # Zero effect 子图
     p = ggplot(sub_data, aes(x = cates, y = enrich_adj, fill = cates)) +
       geom_bar(stat = "identity", position = "dodge") +
       geom_errorbar(aes(ymin = y_min_adj, ymax = y_max_adj, color = cates)) +
@@ -90,7 +87,6 @@ for (label in comp_labels) {
         breaks = seq(0, 0.02, by = 0.005),
         labels = sprintf("%.3f", seq(0.98, 1, by = 0.005)))
   } else {
-    # 其他子图
     p = ggplot(sub_data, aes(x = cates, y = enrich, fill = cates)) +
       geom_bar(stat = "identity", position = "dodge") +
       geom_errorbar(aes(ymin = y_min, ymax = y_max, color = cates)) +
@@ -104,10 +100,8 @@ for (label in comp_labels) {
   plot_list[[label]] = p
 }
 
-# 使用 wrap_plots 组合 5 个子图，固定宽度
 combined_plot = wrap_plots(plot_list, nrow = 1, widths = rep(1, length(plot_list)))
 
-# 输出图形
 print(combined_plot)
 ggsave("SBayesRC_hsq_enrich.pdf", combined_plot, height=8, width=15)
 

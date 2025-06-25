@@ -2,9 +2,7 @@
 ####     VLOOKUP in R and calculate FDR and plot LDSC cts    ####
 #===============================================================#
 #! /public/home/shilulu/anaconda3/envs/R4.2.0/bin/Rscript
-
 data <- read.table('ARHL_MVP_AJHG_BBJ.cell_type_results.txt', header=TRUE, sep='\t')
-
 data$FDR <- p.adjust(data$Coefficient_P_value, method='BH')
 # save the FDR file
 write.table(data, file='ARHL_MVP_AJHG_BBJ.cell_type_results.FDR.txt', sep='\t', row.name=FALSE, quote=FALSE)
@@ -14,9 +12,7 @@ library(data.table)
 
 data <- fread("ARHL_MVP_AJHG_BBJ.cell_type_results.FDR_plot.txt")
 if (any(data$FDR <= 0.05)) {
-  # 计算FDR <= 0.05的值中，对应的max p值，作为 fig 中的阈值线
   p_value_threshold <- max(data$Coefficient_P_value[data$FDR <= 0.05], na.rm=TRUE)
-  
   log10_p_value_threshold <- -log10(p_value_threshold)
 } else {
   log10_p_value_threshold <- NaN
