@@ -1,10 +1,9 @@
 # plot
 #! /public/home/shilulu/anaconda3/envs/R4.2.0/bin/Rscript
-setwd("E:/Shi/ALL_of_my_Job/24-28川大华西/2_project_hearing loss/process/badgers")
+setwd("F:/Github/PHD_job/2_project_hearing loss/NC_revision/badgers")
 library(dplyr)
 library(data.table)
 
-# my_trait <- fread("MVP_out_muti.csv")
 my_trait <- fread("badgers_demeta_out.csv")
 ukb_ano <- fread("UKB_1738trait.csv")
 
@@ -30,7 +29,6 @@ plt_dt$logp = ifelse(plt_dt$pvalue == 0, 115, -log10(plt_dt$pvalue))
 plt_dt$logp = ifelse(plt_dt$logp > 100, 96, plt_dt$logp)
 
 threshold <- 0.05 / 1738
-
 hlt_dt = plt_dt %>% 
   filter(pvalue < threshold) %>% 
   arrange(pvalue) %>% 
@@ -77,5 +75,6 @@ p <- ggplot(plt_dt, aes(x=trait_id, y=logp, shape=factor(shape), color=Category,
     segment.color = "grey50")
 p
 
-ggsave("demeta_badger_traits_add_annote1.png", p, width=15, height=6, dpi=600)
-ggsave("demeta_badger_traits_add_annote1.pdf", p, width=15, height=6)
+dir="F:/Github/PHD_job/2_project_hearing loss/NC_revision/badgers"
+ggsave(file.path(dir,"demeta_badger_traits_add_annote.png"), p, width=15, height=6, dpi=600)
+ggsave(file.path(dir,"demeta_badger_traits_add_annote.pdf"), p, width=15, height=6)

@@ -1,14 +1,10 @@
-setwd("/public/home/shilulu/project_hearing-loss/new_run/all_meta")
-infile="ARHL_MVP_AJHG_BBJ_reformatMETAL.gz"
-plot_mhn(infile, CHR="CHR", BP="POS", p="p")
-
 # # # plot qq
 #! /public/home/shilulu/anaconda3/envs/R4.2.0/bin/Rscript
 library(CMplot)
 library(data.table)
 plot_qq <- function(infile, SNP="SNP", CHR="CHR", BP="BP", P="P")
 
-data <- fread("ARHL_MVP_AJHG_BBJ_reformatMETAL_addchr.gz")
+data <- fread("All_MVP_Trpchevska_De-Angelis_BBJ_filter.gz")
 pltdt <- subset(data, select=c(SNP, CHR, POS, p))
 colnames(pltdt) <- c("SNP", "CHR", "BP", "P")
 plt_filter <- pltdt[pltdt$P > 0, ]

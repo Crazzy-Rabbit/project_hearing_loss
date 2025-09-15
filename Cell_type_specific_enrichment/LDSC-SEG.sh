@@ -1,34 +1,44 @@
-conda activate ld
-#***************************************************************#
-## LDSC-SEG for Mouse cochleae in Philippe Jean et al. PNAS
-#***************************************************************#
+conda activate ldsc
+#*************************#
+##       LDSC-SEG        ##
+#*************************#
 #! /bin/bash
-SUMS="/public/home/shilulu/software/ldsc/munge_sumstats.py"
-SNPlist="/public/home/lijunpeng/LDSC_LD_data/eur_w_ld_chr/w_hm3.snplist"
-meta_file="/public/home/shilulu/project_hearing-loss/new_run/all_meta/ARHL_MVP_AJHG_BBJ_reformatMETAL.gz"
-outdir="/public/home/shilulu/project_hearing-loss/new_run/all_meta/ldsc"
+cd /public/home/shilulu/Wulab/sll/ARHL/NC_sup_test/03.ldsc
+sums="~/software/ldsc/munge_sumstats.py"
+SNPlist="~/Wulab/LDSC/eur_w_ld_chr/w_hm3.snplist"
+gwas="~/Wulab/sll/ARHL/NC_sup_test/01.meta/All_MVP_Trpchevska_De-Angelis_BBJ_filter.gz"
+prefix=$(basename $gwas ".gz")
 
-# step 1: covert to .sumstats.gz
-cmd1="${SUMS} --sumstats ${meta_file} \
---merge-alleles ${SNPlist} \
+$sums --sumstats $gwas \
+--merge-alleles $SNPlist \
 --chunksize 500000 \
 --a1 A1 \
 --a2 A2 \
---out ${outdir}/ARHL_MVP_AJHG_BBJ_ldsc"
-sub_id1=`qsubshcom "$cmd1" 1 100G sums_ldsc 90:00:00 ""`
+--out $outdir/$prefix
 
 
-#! /bin/bash                     
-LDSC="/public/home/shilulu/software/ldsc/ldsc.py"
-REF_LD_CHR="/public/share/wchirdzhq2022/Wulab_share/LDSC/1000G_EUR_Phase3_baseline/baseline."
-REF_LD_CTS="/public/share/wchirdzhq2022/Wulab_share/LDSC/Mouse_cochleae/Mouse_cochleae_gene_expr.ldcts"
-W_LD_CHR="/public/share/wchirdzhq2022/Wulab_share/LDSC/weights_hm3_no_hla/weights."
-out_sums="/public/home/shilulu/project_hearing-loss/new_run/all_meta/ldsc"
-out_ldscseg="/public/home/shilulu/project_hearing-loss/new_run/all_meta/ldsc/Mouse_cochleae"
+#***************************************************************#
+## LDSC-SEG for Mouse cochleae in Philippe Jean et al. PNAS
+#***************************************************************#
+conda activate ldsc
 
-cmd="${LDSC} --h2-cts ${out_sums}/ARHL_MVP_AJHG_BBJ_ldsc.sumstats.gz \
-             --ref-ld-chr ${REF_LD_CHR} \
-             --out ${out_ldscseg}/ARHL_MVP_AJHG_BBJ \
-             --ref-ld-chr-cts ${REF_LD_CTS} \
-             --w-ld-chr ${W_LD_CHR}"
-qsubshcom "$cmd" 1 50G ldsc_cts 10:00:00 ""
+Eshel="/public/home/shilulu/Wulab_project/ARHL/NC_sup_test/08.scEnrich/Eshel/LDSC/config/scRNA_gene_expr.ldcts"
+Milon="/public/home/shilulu/Wulab_project/ARHL/NC_sup_test/08.scEnrich/Milon/LDSC/config/scRNA_gene_expr.ldcts"
+Ranum="/public/home/shilulu/Wulab_project/ARHL/NC_sup_test/08.scEnrich/Ranum/LDSC/config/scRNA_gene_expr.ldcts"
+Jean="/public/home/shilulu/Wulab_project/ARHL/NC_sup_test/08.scEnrich/Jean/LDSC/config/scRNA_gene_expr.ldcts"
+Sun1_2="/public/home/shilulu/Wulab_project/ARHL/NC_sup_test/08.scEnrich/Sun/1-2M/LDSC/config/scRNA_gene_expr.ldcts"
+Sun12_15="/public/home/shilulu/Wulab_project/ARHL/NC_sup_test/08.scEnrich/Sun/12-15M/LDSC/config/scRNA_gene_expr.ldcts"
+Sun5="/public/home/shilulu/Wulab_project/ARHL/NC_sup_test/08.scEnrich/Sun/5M/LDSC/config/scRNA_gene_expr.ldcts"
+Xu="/public/home/shilulu/Wulab_project/ARHL/NC_sup_test/08.scEnrich/Xu/LDSC/config/scRNA_gene_expr.ldcts"
+Iyer="/public/home/shilulu/Wulab_project/ARHL/NC_sup_test/08.scEnrich/Iyer/LDSC/config/scRNA_gene_expr.ldcts"
+
+REF_LD_CTS=$Iyer
+REF_LD_CHR="~/Wulab/LDSC/1000G_EUR_Phase3_baseline/baseline."
+W_LD_CHR="~/Wulab/LDSC/weights_hm3_no_hla/weights."
+gwas="~/Wulab/sll/ARHL/NC_sup_test/03.ldsc/All_MVP_Trpchevska_De-Angelis_BBJ_filter.sumstats.gz"
+$ldsc --h2-cts $gwas \
+        --ref-ld-chr $REF_LD_CHR \
+        --out All_MVP_Trpchevska_De-Angelis_BBJ_filter \
+        --ref-ld-chr-cts $REF_LD_CTS \
+        --w-ld-chr $W_LD_CHR
+

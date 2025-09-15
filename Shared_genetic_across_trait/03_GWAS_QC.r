@@ -1,3 +1,8 @@
+#--------------------------------------------//
+#
+# GSMR for some traits select from BADGERS
+# 
+#-------------------------------------------//
 #------------- QC for GWAS summary ----//
 sums_col_treate <- function(gwas, SNP, A1, A2, freq, P,
                             CHR = NULL, POS = NULL,
@@ -44,9 +49,28 @@ sums_col_treate <- function(gwas, SNP, A1, A2, freq, P,
     return(gwas)
 }
 
+# Waist_circumference.v1.1.fastGWA.gz
 library(data.table)
-gwas = fread("Ever_smoke.fastGWA.gz")
+gwas = fread("loneliness.v1.1.fastGWA.gz")
 clean = sums_col_treate(gwas, "variant_id", "effect_allele", "other_allele", "effect_allele_frequency", "p_value", BETA="beta", SE="standard_error" N="N")
 clean = sums_col_treate(gwas, "SNP", "A1", "A2", "AF1", "P", BETA="BETA", SE="SE", N="N")
 clean = clean[, .(SNP, A1, A2, freq, b, se, p, N)]
-fwrite(clean, "../cleanGWAS/clean_ever_smoke.fastGWA.gz", sep="\t")
+fwrite(clean, "../cleanGWAS/clean_loneliness.fastGWA.gz", sep="\t")
+
+#############################################
+
+#-------------- QC ----//
+library(data.table)
+exposure = fread("exposure.txt", header=FALSE)
+setnames(exposure, c("trait", "file"))
+
+for (i in 1:nrow(exposure)){
+  f = exposure$file[i]
+  gwas = fread(f)
+  key_cols = c("SNP", "A1", "A2", "freq", "b", "se", "p", "N")
+  colnames(gwas) = key_cols
+  gwas[, (key_cols) := lapply(.SD, function(x) trimws(as.character(x))), .SDcols = key_cols]
+  gwas <- gwas[!apply(gwas[, ..key_cols], 1, function(row) any(is.na(row) | row == "")), ]
+  gwas = gwas[!duplicated(gwas$SNP)]
+  fwrite(gwas, file=f, sep="\t")
+}
